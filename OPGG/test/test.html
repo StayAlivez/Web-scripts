@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MutationObserver 示例</title>
+</head>
+<body>
+
+<button id="addDivButton">添加一个 div</button>
+
+<script>
+  // 创建一个 MutationObserver 实例，定义当 DOM 发生变化时要执行的回调函数
+  var observer = new MutationObserver(function(mutationsList, observer) {
+    mutationsList.forEach(function(mutation) {
+      if (mutation.type === 'childList') {
+        console.log('A new child node has been added or removed.');
+        mutation.addedNodes.forEach(function(node) {
+          if (node.nodeName === 'DIV') {
+            console.log('A new div has been added:', node);
+            // 例如，隐藏这个新添加的 div
+            node.style.display = 'none';
+          }
+        });
+      }
+    });
+  });
+
+  // 选择要观察的目标节点
+  var targetNode = document.body;
+
+  // // 配置观察选项：在这里我们观察子节点的变化
+  var config = { childList: true, subtree: true };
+
+  // // 开始观察目标节点
+  observer.observe(targetNode, config);
+
+  // 模拟添加一个新的 div
+  document.getElementById('addDivButton').addEventListener('click', function() {
+    var newDiv = document.createElement('div');
+    newDiv.textContent = '我是一个新添加的 div';
+    document.body.appendChild(newDiv);
+  });
+
+</script>
+
+</body>
+</html>
