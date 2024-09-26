@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         opgg去广告
 // @namespace    http://akiyamamio.online/
-// @version      0.0.3
+// @version      0.0.4
 // @description  去除opgg 英雄联盟,云顶之弈,无畏契约的左侧视屏广告
 // @author       alive
 // @match        *://*.op.gg/*
@@ -55,18 +55,19 @@
                 ["顶部横幅", "#opgg-kit-house-image-banner"],
                 ["英雄数据及个人资料-左右侧", ".vm-skin"],
                 ["底部弹出", ".vm-footer"],
-                ["中部横幅", ".eaw4xvd0"],
-                ["游戏模式-左右侧-父类", ".eaw4xvd1"],
-                ["游戏模式-左右侧", ".eaw4xvd2"],
-                ["英雄数据右下", ".eaw4xvd3"],
-                ["插入横幅", ".eaw4xvd4"],
-                ["底部横幅", ".eaw4xvd5"],
+                ["中部横幅", ".e15sswvq0"],
+                ["游戏模式-左右侧-父类", ".e15sswvq1"],
+                ["游戏模式-左右侧", ".e15sswvq2"],
+                ["英雄数据右下", ".e15sswvq3"],
+                ["插入横幅", ".e15sswvq4"],
+                ["底部横幅", ".e15sswvq5"],
             ])
         ),
         createConfigIfMatch(
             "TFT_Config",
             ".*://tft.op.gg/.*",
             new Map([
+                ["顶部横幅", "#opgg-kit-house-image-banner"],
                 ["移动视屏", "#video-meta-trend-ad"],
                 ["广告0", "#video-tools-ad"],
                 ["左右侧", ".css-13lit7a"],
@@ -78,6 +79,7 @@
             "V_Config",
             ".*://valorant.op.gg/.*",
             new Map([
+                ["顶部横幅", "#opgg-kit-house-image-banner"],
                 ["移动视屏", "#video-leaderboards-ad"],
                 ["广告0", "#video-stats-ad"],
                 ["广告1", "#video-crosshair-ad"],
