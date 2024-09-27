@@ -61,6 +61,9 @@
                 ["英雄数据右下", ".e15sswvq3"],
                 ["插入横幅", ".e15sswvq4"],
                 ["底部横幅", ".e15sswvq5"],
+                ["广告0", ".banner-container"],
+                ["广告1", "#banner-container"],
+                ["广告2", ".banner"],
             ])
         ),
         createConfigIfMatch(

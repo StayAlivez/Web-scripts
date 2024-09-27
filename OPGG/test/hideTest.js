@@ -1,22 +1,6 @@
-// ==UserScript==
-// @name         opgg去广告
-// @namespace    http://akiyamamio.online/
-// @version      0.0.1
-// @description  删除左侧的视屏广告
-// @author       alive
-// @match        https://*.op.gg/*
-// @icon         https://s-lol-web.op.gg/favicon.ico
-// @license      MIT
-// @grant        none
-// @run-at       document-end
-// ==/UserScript==
+let regExp = new RegExp("https://hb.vntsm.com/ab/live/fatum/ad-manager-bundle.min.js");
+console.log(regExp.test("https://hb.vntsm.com/ab/live/fatum/ad-manager-bundle.min.js"))
 
-(function () {
-    // 启用严格模式
-    'use strict';
-
-
-})();
 
 
 
