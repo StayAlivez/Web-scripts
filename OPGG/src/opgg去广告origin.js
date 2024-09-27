@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         opgg去广告
 // @namespace    http://akiyamamio.online/
-// @version      0.0.4
+// @version      0.0.5
 // @description  去除opgg 英雄联盟,云顶之弈,无畏契约的左侧视屏广告
 // @author       alive
 // @match        *://*.op.gg/*
