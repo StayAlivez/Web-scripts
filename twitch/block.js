@@ -8,7 +8,6 @@
 // @icon         https://assets.twitch.tv/assets/favicon-32-e29e246c157142c94346.png
 // @license      MIT
 // @grant        none
-// @run-at       document-end
 // ==/UserScript==
 
 //Immediately invoked function expression
@@ -19,6 +18,7 @@
 
     // 定义要拦截的正则表达式列表
     const blockedPatterns = [
+        new RegExp(".*://assets.twitch.tv/.*"),
         /^https?:\/\/.*\.amazon-adsystem\.com\//,   // 匹配 aax-fe.amazon-adsystem.com 下的所有请求
         /^https?:\/\/api\.twitch\.ap-northeast-1\.prod\.paets\.advertising\.amazon\.dev\//,   // 匹配 Twitch 广告 API 下的所有请求
         /^https?:\/\/.*\.media-amazon\.com\//,    // 匹配 m.media-amazon.com 下的所有请求
@@ -54,6 +54,30 @@
         }
         return originalFetch.apply(this, arguments);
     };
+    const blockedPatternsScript = [
+        new RegExp(".*://assets.twitch.tv/.*")
+    ];
+
+    // 创建 MutationObserver 监控 DOM 变化
+    const observer = new MutationObserver((mutationsList) => {
+        for (let mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(node => {
+                    if (node.tagName === 'SCRIPT' && node.src) {
+                        // 检查脚本的 src 是否匹配拦截模式
+                        if (blockedPatternsScript.some(pattern => pattern.test(node.src))) {
+                            console.log('Blocked script:', node.src);
+                            // 阻止脚本加载
+                            node.remove();
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    // 观察整个文档的子节点变化
+    observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 
 
