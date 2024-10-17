@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         opgg去广告
 // @namespace    http://akiyamamio.online/
-// @version      0.0.6
+// @version      0.0.7
 // @description  去除opgg 英雄联盟,云顶之弈,无畏契约的左侧视屏广告
 // @author       alive
 // @match        *://*.op.gg/*
@@ -13,142 +13,133 @@
 (function () {
     'use strict';
 
+    // JSON 配置对象
+    const configData = {
+        configs: [
+            {
+                configName: "LOL_Config",
+                urlPattern: ".*://www.op.gg/.*",
+                adSelectors: [
+                    "#opgg-video",
+                    "#primisPlayerContainerDiv",
+                    "#banner-container",
+                    "#opgg-kit-house-image-banner",
+                    ".vm-skin",
+                    ".vm-footer",
+                    ".banner-container",
+                    "#banner-container",
+                    ".banner",
+                    "#aniplayer",
+                    "div[style='width: 405px; height: 228px;']",
+                    "div[class='css-14mw2gw e1ye94yl7']",
+                    "div[style='position: fixed; overflow: hidden; pointer-events: none; inset: 255px 1314.5px 0px 0px; text-align: right; z-index: 2;']",
+                    "div[style='position: fixed; overflow: hidden; pointer-events: none; inset: 255px 0px 0px 1314.5px; text-align: left; z-index: 2;']"
+                ]
+            },
+            {
+                configName: "TFT_Config",
+                urlPattern: ".*://tft.op.gg/.*",
+                adSelectors: [
+                    "#opgg-kit-house-image-banner",
+                    "#video-meta-trend-ad",
+                    "#video-tools-ad",
+                    ".css-13lit7a",
+                    ".desktop",
+                    ".css-1t8t0it"
+                ]
+            },
+            {
+                configName: "V_Config",
+                urlPattern: ".*://valorant.op.gg/.*",
+                adSelectors: [
+                    "#opgg-kit-house-image-banner",
+                    "#video-leaderboards-ad",
+                    "#video-stats-ad",
+                    "#video-crosshair-ad",
+                    "#video-agents-ad",
+                    "#video-weapons-ad",
+                    "#video-profile-ad",
+                    ".ad",
+                    ".ad--desktop",
+                    "#primis_container_div"
+                ]
+            }
+        ]
+    };
 
-    // Config对象
-    function Config(configName, url, adSelectorMap) {
+    // Config 对象
+    function Config(configName, urlPattern, adSelectors) {
         this.configName = configName;
-        this.url = url;
-        this.adSelectorMap = adSelectorMap;
-        this.getADSelector = function () {
-            let adSelectorArray = []; // 使用数组存储键
-            this.adSelectorMap.forEach((value, key, map) => {
-                adSelectorArray.push(value); // 将键放入数组中
-            });
-            return adSelectorArray.join(",");
-        };
+        this.urlPattern = urlPattern;
+        this.adSelectors = adSelectors;
     }
 
+    // 获取广告选择器的方法，直接返回选择器字符串
+    Config.prototype.getADSelector = function () {
+        return this.adSelectors.join(",");
+    };
+
     // 动态创建Config的函数，根据当前URL匹配并创建
-    function createConfigIfMatch(configName, urlPattern, adSelectorMap) {
+    function createConfigIfMatch(configName, urlPattern, adSelectors) {
         const currentUrl = window.location.href; // 获取当前页面的URL
         const pattern = new RegExp(urlPattern); // 创建正则表达式
 
         // 判断当前URL是否匹配指定的URL模式
-        if (pattern.test(currentUrl)) {
-            return new Config(configName, urlPattern, adSelectorMap);
-        }
-        return null; // 如果不匹配则返回null
+        return pattern.test(currentUrl) ? new Config(configName, urlPattern, adSelectors) : null;
     }
 
-    // 动态创建多个配置对象
-    const configs = [
-        createConfigIfMatch(
-            "LOL_Config",
-            ".*://www.op.gg/.*",
-            new Map([
-                ["移动视屏", "#opgg-video"],
-                ["侧边视频", "#primisPlayerContainerDiv"],
-                ["中部横幅", "#banner-container"],
-                ["顶部横幅", "#opgg-kit-house-image-banner"],
-                ["英雄数据及个人资料-左右侧", ".vm-skin"],
-                ["底部弹出", ".vm-footer"],
-                ["广告0", ".banner-container"],
-                ["广告1", "#banner-container"],
-                ["广告2", ".banner"],
-                ["广告3", "#aniplayer"],
-                ["广告4", "div[style=\"width: 405px; height: 228px;\"]"],
-                ["广告5", "div[style=\"position: fixed; overflow: hidden; pointer-events: none; inset: 255px 1314.5px 0px 0px; text-align: right; z-index: 2;\"]"],
-                ["广告6", "div[style=\"position: fixed; overflow: hidden; pointer-events: none; inset: 255px 0px 0px 1314.5px; text-align: left; z-index: 2;\"]"],
-            ])
-        ),
-        createConfigIfMatch(
-            "TFT_Config",
-            ".*://tft.op.gg/.*",
-            new Map([
-                ["顶部横幅", "#opgg-kit-house-image-banner"],
-                ["移动视屏", "#video-meta-trend-ad"],
-                ["广告0", "#video-tools-ad"],
-                ["左右侧", ".css-13lit7a"],
-                ["中部横幅", ".desktop"],
-                ["中部横幅", ".css-1t8t0it"],
-            ])
-        ),
-        createConfigIfMatch(
-            "V_Config",
-            ".*://valorant.op.gg/.*",
-            new Map([
-                ["顶部横幅", "#opgg-kit-house-image-banner"],
-                ["移动视屏", "#video-leaderboards-ad"],
-                ["广告0", "#video-stats-ad"],
-                ["广告1", "#video-crosshair-ad"],
-                ["广告2", "#video-agents-ad"],
-                ["广告3", "#video-weapons-ad"],
-                ["左右侧", ".ad"],
-                ["横幅", ".ad--desktop"],
-                ["广告0", "#primis_container_div"],
-            ])
+    // 动态创建多个配置对象，从 JSON 数据中读取
+    const configs = configData.configs
+        .map(({ configName, urlPattern, adSelectors }) =>
+            createConfigIfMatch(configName, urlPattern, adSelectors)
         )
-    ].filter(config => config !== null); // 过滤掉没有匹配的配置
+        .filter(config => config !== null); // 过滤掉没有匹配的配置
 
-    // 处理匹配到的第一个Config
     if (configs.length > 0) {
         const matchedConfig = configs[0]; // 使用匹配到的第一个配置
-        // console.clear();
         console.log("匹配到的配置:", matchedConfig.configName);
-        console.log("广告选择器映射:", matchedConfig.adSelectorMap);
-        let adSelector = matchedConfig.getADSelector();
-        // 观察DOM并自动隐藏
-        const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                // 监控子节点的变化
-                if (mutation.type === 'childList') {
+        const adSelector = matchedConfig.getADSelector();
 
-                    // 隐藏所有iframes
-                    hiddenIframes();
-
-                    const elements = document.querySelectorAll(adSelector);
-                    elements.forEach(function (element) {
-                        if (element && element.style.display !== 'none') {
-                            element.style.display = 'none';
-                        }
-                    });
-                }
-                // 监控属性（style）的变化
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    // 隐藏所有iframes
-                    hiddenIframes();
-                    const element = mutation.target;
-                    if (element && element.matches(adSelector) && element.style.display !== 'none') {
-                        element.style.display = 'none';
-                    }
+        // 观察DOM并自动隐藏广告
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'childList' || (mutation.type === 'attributes' && mutation.attributeName === 'style')) {
+                    hideAdsAndIframes(adSelector);
                 }
             });
         });
 
-        // 开始观察DOM的变化，除了childList和subtree，添加attributes属性监听
+        // 开始观察DOM的变化，监听子元素、属性的变化
         observer.observe(document.body, {
-            childList: true,        // 监听子元素的添加或删除
-            subtree: true,          // 监听所有子节点
-            attributes: true,       // 监听属性变化
+            childList: true,
+            subtree: true,
+            attributes: true,
             attributeFilter: ['style'] // 只监听`style`属性的变化
         });
 
-
+        // 初始隐藏广告和 iframe
+        hideAdsAndIframes(adSelector);
     } else {
         console.log("没有找到匹配的配置");
     }
 
-    // 隐藏所有iframes
-    function hiddenIframes() {
+    // 隐藏广告和 iframe 的函数
+    function hideAdsAndIframes(adSelector) {
+        // 隐藏广告元素
+        const elements = document.querySelectorAll(adSelector);
+        elements.forEach(element => {
+            if (element && element.style.display !== 'none') {
+                element.style.display = 'none';
+            }
+        });
+
+        // 隐藏所有 iframes
         const iframes = document.getElementsByTagName('iframe');
-        if (iframes.length > 0) {
-            Array.from(iframes).forEach(function (iframe) {
+        Array.from(iframes).forEach(iframe => {
+            if (iframe && iframe.style.display !== 'none') {
                 iframe.style.display = 'none';
-            });
-        }
+            }
+        });
     }
 })();
-
-
-
 
