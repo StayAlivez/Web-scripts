@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="click">点击</div>
+<div id="remove">移除</div>
+<script id="script">
+    document.getElementById('click').addEventListener('click', acb);
+
+    function acb() {
+        alert("click")
+    }
+
+    document.getElementById('remove').addEventListener('click', () => {
+        document.getElementById("script").remove();
+        alert("remove")
+    });
+</script>
+
+
+</body>
+</html>

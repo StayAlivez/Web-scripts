@@ -134,11 +134,8 @@
         });
 
         // 隐藏所有 iframes
-        const iframes = document.getElementsByTagName('iframe');
-        Array.from(iframes).forEach(iframe => {
-            if (iframe && iframe.style.display !== 'none') {
-                iframe.style.display = 'none';
-            }
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.style.display = 'none';
         });
     }
 })();

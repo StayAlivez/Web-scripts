@@ -10,10 +10,8 @@
 // @grant        none
 // ==/UserScript==
 
-//Immediately invoked function expression
-//立即执行函数表达式
+
 (function () {
-    // 启用严格模式
     'use strict';
 
     // 定义要拦截的正则表达式列表
@@ -54,30 +52,6 @@
         }
         return originalFetch.apply(this, arguments);
     };
-    const blockedPatternsScript = [
-        new RegExp(".*://assets.twitch.tv/.*")
-    ];
-
-    // 创建 MutationObserver 监控 DOM 变化
-    const observer = new MutationObserver((mutationsList) => {
-        for (let mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(node => {
-                    if (node.tagName === 'SCRIPT' && node.src) {
-                        // 检查脚本的 src 是否匹配拦截模式
-                        if (blockedPatternsScript.some(pattern => pattern.test(node.src))) {
-                            console.log('Blocked script:', node.src);
-                            // 阻止脚本加载
-                            node.remove();
-                        }
-                    }
-                });
-            }
-        }
-    });
-
-    // 观察整个文档的子节点变化
-    observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 
 
